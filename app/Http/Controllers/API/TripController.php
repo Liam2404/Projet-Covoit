@@ -7,17 +7,32 @@ use App\Models\User;
 use App\Models\Trip;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\JsonResponse;
+
 
 class TripController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($userId): JsonResponse
     {
-        $trips = Trip::all();
+        try {
+            // Trouver l'utilisateur par ID
+            $user = User::find($userId);
 
-        return response()->json($trips);
+            if (!$user) {
+                return response()->json(['error' => 'User not found'], 404);
+            }
+
+            // Récupérer tous les voyages associés à cet utilisateur
+            $trips = $user->trips;
+
+            return response()->json($trips);
+        } catch (\Exception $e) {
+            Log::error('Error fetching trips: '.$e->getMessage());
+            return response()->json(['error' => 'An error occurred while fetching the trips'], 500);
+        }
     }
 
     /**

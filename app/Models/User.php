@@ -13,29 +13,53 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    // La relation entre User et Trip
-    public function trips(): HasMany
+    /**
+     * La relation entre User et Trip.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function trips()
     {
         return $this->hasMany(Trip::class);
     }
 
-    // La relation entre User et Role
+    /**
+     * La relation entre User et Role.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function role(): BelongsTo
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class, 'role_id');
     }
 
-    // Vérifier le rôle
-    public function hasRole($role): bool
+    /**
+     * Vérifier le rôle de l'utilisateur.
+     *
+     * @param string $role
+     * @return bool
+     */
+    public function hasRole(string $role): bool
     {
-        return $this->role->name === $role;
+        // Assurez-vous que la relation 'role' est chargée.
+        return strtolower($this->role->name ?? '') === strtolower($role);
     }
 
+    /**
+     * Vérifier si l'utilisateur est un administrateur.
+     *
+     * @return bool
+     */
     public function isAdmin(): bool
     {
         return $this->hasRole('admin');
     }
 
+    /**
+     * Vérifier si l'utilisateur est un utilisateur normal.
+     *
+     * @return bool
+     */
     public function isUser(): bool
     {
         return $this->hasRole('user');
@@ -52,7 +76,7 @@ class User extends Authenticatable
         'firstname',
         'email',
         'password',
-        'role_id',
+        'role_id', // Assurez-vous que 'role_id' est bien la clé étrangère dans votre table 'users'
         'avatar'
     ];
 
@@ -75,4 +99,15 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Mutateur pour hacher le mot de passe avant de le sauvegarder.
+     *
+     * @param string $value
+     * @return void
+     */
+    public function setPasswordAttribute(string $value): void
+    {
+        $this->attributes['password'] = bcrypt($value);
+    }
 }

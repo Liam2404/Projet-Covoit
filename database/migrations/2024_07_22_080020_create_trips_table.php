@@ -6,24 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateTripsTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::create('trips', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
             $table->string('start_location');
             $table->string('end_location');
             $table->timestamp('start_time');
             $table->timestamp('end_time');
-            $table->integer('distance');
+            $table->decimal('distance', 8, 2);
             $table->decimal('price', 8, 2);
             $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('trips');
     }
