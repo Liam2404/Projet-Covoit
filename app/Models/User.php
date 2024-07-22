@@ -2,54 +2,62 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    public function trips()
+    // La relation entre User et Trip
+    public function trips(): HasMany
     {
         return $this->hasMany(Trip::class);
     }
 
-    public function role()
+    // La relation entre User et Role
+    public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
     }
 
-    public function hasRole($role)
+    // Vérifier le rôle
+    public function hasRole($role): bool
     {
         return $this->role->name === $role;
     }
 
-    public function isAdmin()
+    public function isAdmin(): bool
     {
         return $this->hasRole('admin');
     }
 
-    public function isUser()
+    public function isUser(): bool
     {
         return $this->hasRole('user');
     }
 
     /**
-     * The attributes that are mass assignable.
+     * Les attributs qui peuvent être assignés en masse.
      *
      * @var array<int, string>
      */
     protected $fillable = [
         'name',
+        'lastname',
+        'firstname',
         'email',
         'password',
+        'role_id',
+        'avatar'
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Les attributs à masquer lors de la sérialisation.
      *
      * @var array<int, string>
      */
@@ -59,7 +67,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast.
+     * Les attributs à caster.
      *
      * @var array<string, string>
      */

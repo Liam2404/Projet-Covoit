@@ -21,10 +21,14 @@ class Handler extends ExceptionHandler
     /**
      * Register the exception handling callbacks for the application.
      */
-    public function register(): void
+    public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (NotFoundHttpException $e, $request) {
+            if ($request->is("api/*")) {
+                return response()->json([
+                    "message" => "Ressource introuvable"
+                ], 404);
+            }
         });
     }
 }

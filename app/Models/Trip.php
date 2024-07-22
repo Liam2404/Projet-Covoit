@@ -10,7 +10,23 @@ class Trip extends Model
 {
     use HasFactory;
 
-    public function user () : BelongsTo
+    /**
+     * Les attributs qui peuvent être assignés en masse.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'user_id',
+        'start_location',
+        'end_location',
+        'start_time',
+        'end_time',
+        'distance',
+        'price',
+    ];
+
+    // La relation entre Trip et User
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

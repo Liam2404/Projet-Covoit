@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->integer('trips')->nullable();
             $table->string('role')->nullable();
-            $table->string('name');
+            $table->string('name')->require();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
