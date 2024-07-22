@@ -20,8 +20,8 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'lastname' => 'required|string|max:255', // Ajoutez ce champ
-            'firstname' => 'required|string|max:255', // Ajoutez ce champ si nécessaire
+            'lastname' => 'required|string|max:255', // Assurez-vous d'inclure ce champ
+            'firstname' => 'required|string|max:255', // Inclure ce champ si nécessaire
         ]);
 
         if ($validator->fails()) {
@@ -49,20 +49,33 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:8',
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+    
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
                 'message' => 'Invalid login details'
             ], 401);
         }
-
+    
         $user = User::where('email', $request['email'])->firstOrFail();
         $token = $user->createToken('auth_token')->plainTextToken;
-
+    
         return response()->json([
+            'message' => 'Connexion réussie',
+            'user' => $user,
             'access_token' => $token,
             'token_type' => 'Bearer',
         ]);
     }
+    
+    
 
     /**
      * Logout the authenticated user.
