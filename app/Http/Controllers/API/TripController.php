@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
 
 
+
+
 class TripController extends Controller
 {
     /**

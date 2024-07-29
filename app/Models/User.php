@@ -76,7 +76,7 @@ class User extends Authenticatable
         'firstname',
         'email',
         'password',
-        'role_id', // Assurez-vous que 'role_id' est bien la clé étrangère dans votre table 'users'
+        'role',
         'avatar'
     ];
 
